@@ -1,0 +1,16 @@
+version: "2"
+services:
+  epavapi:
+    image: registry.jorgeadolfo.com/epav-api:1.0.1
+    volumes:
+      - custom_types:/cli/custom_types
+      - files:/server-api/files
+  gui:
+    image: registry.jorgeadolfo.com/epav-gui:1.0.1
+    ports:
+      - 8000:3000
+    links:
+      - epavapi
+    environment:
+      - APIHOST=epavapi
+      - APIPORT=5000
