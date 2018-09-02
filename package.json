@@ -1,20 +1,30 @@
 {
   "name": "template",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "proxy": "http://localhost:5000",
   "dependencies": {
+    "codemirror": "^5.40.0",
+    "d3-state-visualizer": "^1.3.1",
+    "jsonlint": "^1.6.3",
+    "prop-types": "^15.6.2",
     "react": "^16.4.2",
+    "react-codemirror2": "^5.1.0",
     "react-dom": "^16.4.2",
+    "react-json-tree": "^0.11.0",
     "react-scripts": "1.1.5",
     "reactstrap": "^6.4.0",
+    "styled-components": "^3.4.5",
     "sweetalert": "^2.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "docker-build": "npm run build && make",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "dc": "docker-compose -f docker/docker-compose.yml",
+    "eject": "react-scripts eject",
+    "precommit": "pretty-quick --staged"
   },
   "devDependencies": {
     "babel-eslint": "^9.0.0",
