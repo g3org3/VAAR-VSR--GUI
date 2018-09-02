@@ -1,16 +1,26 @@
-version: "2"
+version: '2'
 services:
   epavapi:
-    image: registry.jorgeadolfo.com/epav-api:1.0.1
-    volumes:
-      - custom_types:/cli/custom_types
-      - files:/server-api/files
+    image: registry.jorgeadolfo.com/epav-api:1.1.0
+    # environment:
+    #   # if we want to change the container port
+    #   - PORT=5000 #default 5000
+    # uncomment this to enable data persistance
+    # volumes:
+    #   - ./custom_types:/cli/custom_types
+    #   - ./files:/server-api/files
   gui:
     image: registry.jorgeadolfo.com/epav-gui:1.0.1
     ports:
+      # bind hostport:containerport
       - 8000:3000
     links:
+      # docker-compose
+      # appends /etc/hosts of this container :)
       - epavapi
     environment:
+      # tell the gui where is the api
       - APIHOST=epavapi
       - APIPORT=5000
+      # If we want to change the container port
+      # - PORT=3000 #default 3000
