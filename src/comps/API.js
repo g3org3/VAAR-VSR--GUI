@@ -26,8 +26,8 @@ export default class API extends PureComponent {
           ? await res.text()
           : await res.json();
       this.setState({ data: isJSON(text) || text });
-      if (typeof this.props.bindState === 'function')
-        this.props.bindState({ endpoint, data: text });
+      if (typeof this.props.onData === 'function')
+        this.props.onData({ endpoint, data: text });
     } else {
       swal({
         title: 'Oops',
