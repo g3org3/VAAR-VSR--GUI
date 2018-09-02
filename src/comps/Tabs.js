@@ -3,18 +3,27 @@ import { Nav, NavItem, NavLink } from 'reactstrap';
 
 const { Provider, Consumer } = React.createContext({});
 export default class Tabs extends Component {
+  static defaultProps = {
+    bordered: false,
+    pills: false,
+    tabs: false,
+    onSetTab: () => {},
+  };
+
   state = {
     tab: '',
     content: '',
   };
 
-  static Tab = ({ title, children }) => (
+  static Consumer = Consumer;
+
+  static Tab = ({ title = '', children }) => (
     <Consumer>
       {({ tab, setTab }) => (
         <NavItem>
           <NavLink
             onClick={() => setTab({ title, children })}
-            href="#"
+            href="javascript:void(0);"
             active={tab === title}
           >
             {title}
@@ -24,8 +33,14 @@ export default class Tabs extends Component {
     </Consumer>
   );
 
-  setTab = ({ title, children }) =>
+  setTab = ({ title, children }) => {
+    const { onSetTab } = this.props;
     this.setState({ tab: title, content: children });
+    return (
+      typeof onSetTab === 'function' &&
+      onSetTab({ tab: title, content: children })
+    );
+  };
 
   getProps = () => {
     return {
@@ -35,17 +50,36 @@ export default class Tabs extends Component {
   };
 
   componentDidMount() {
-    if (this.props.children && this.props.children.length > 0) {
-      this.setTab(this.props.children[0].props);
+    // set the first tab active
+    const {
+      children: { length },
+      children,
+    } = this.props;
+    if (!children) return;
+    if (!length) {
+      this.setTab(children.props);
+    } else if (length > 0) {
+      this.setTab(children[0].props);
     }
   }
 
   render() {
     return (
       <Provider value={this.getProps()}>
-        <Nav tabs>{this.props.children}</Nav>
-        <div style={{ padding: '20px' }}>{this.state.content}</div>
+        <Nav {...this.props}>{this.props.children}</Nav>
+        <div style={style(this.props.bordered)}>{this.state.content}</div>
       </Provider>
     );
   }
+}
+
+function style(bordered) {
+  return bordered
+    ? {
+        borderLeft: '1px solid #ddd',
+        borderRight: '1px solid #ddd',
+        borderBottom: '1px solid #ddd',
+        padding: '20px',
+      }
+    : { padding: '20px' };
 }
