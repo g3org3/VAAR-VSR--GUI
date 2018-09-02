@@ -1,11 +1,20 @@
 import { PureComponent } from 'react';
 import swal from 'sweetalert';
-
+const isJSON = code => {
+  if (typeof code === 'object') return code;
+  try {
+    return JSON.parse(code);
+  } catch (e) {
+    return false;
+  }
+};
 export default class API extends PureComponent {
   state = { data: '' };
 
   componentDidMount() {
     this.getData(this.props);
+    if (typeof this.props.bindSave === 'function')
+      this.props.bindSave(this.saveData);
   }
 
   async getData(props) {
@@ -16,7 +25,9 @@ export default class API extends PureComponent {
         res.headers.get('Content-Type') !== 'application/json'
           ? await res.text()
           : await res.json();
-      this.setState({ data: text });
+      this.setState({ data: isJSON(text) || text });
+      if (typeof this.props.bindState === 'function')
+        this.props.bindState({ endpoint, data: text });
     } else {
       swal({
         title: 'Oops',
