@@ -6,8 +6,13 @@ export default class Home extends PureComponent {
     data: '',
   };
 
-  run = async e => {
-    e.preventDefault();
+  componentDidMount() {
+    if (typeof this.props.bindRun === 'function') {
+      this.props.bindRun(this.run);
+    }
+  }
+
+  run = async () => {
     this.setState({ data: '' });
     let finish = false;
     let loading = false;
