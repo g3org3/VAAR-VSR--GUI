@@ -9,6 +9,7 @@ const Div = styled.div`
   height: 80vh;
 `;
 const isJSON = code => {
+  if (typeof code === 'object') return code;
   try {
     return JSON.parse(code);
   } catch (e) {
@@ -18,18 +19,12 @@ const isJSON = code => {
 
 class App extends Component {
   render() {
-    const {
-      code: { custom_rules },
-    } = this.props;
-    const quitReason = (isJSON(this.props.code) || {}).quitReason;
-    if (!custom_rules && !quitReason) return <pre>no data</pre>;
-    const code =
-      typeof this.props.code === 'object'
-        ? JSON.stringify(this.props.code || {})
-        : this.props.code;
+    const code = isJSON(this.props.code) || {};
+    if (Object.keys(code).length < 1) return <pre>no data</pre>;
+    const data = JSON.stringify(code);
     return (
       <Div>
-        <MainViewer code={code} />
+        <MainViewer code={data} />
       </Div>
     );
   }

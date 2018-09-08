@@ -22,9 +22,9 @@ export default class API extends PureComponent {
     const res = await fetch(`/api${endpoint}`);
     if (res.status < 300) {
       const text =
-        res.headers.get('Content-Type') !== 'application/json'
-          ? await res.text()
-          : await res.json();
+        res.headers.get('Content-Type') === 'application/json'
+          ? await res.json()
+          : await res.text();
       this.setState({ data: isJSON(text) || text });
       if (typeof this.props.onData === 'function')
         this.props.onData({ endpoint, data: text });

@@ -7,10 +7,20 @@ import ObjectVisualizer from '../ObjectVisualizer';
 import JSONTree from './JSONTree';
 import MainWrapper from './MainWrapper';
 
+const Debug = props => (
+  <pre
+    style={{
+      color: 'white',
+      height: '70vh',
+    }}
+  >
+    {JSON.stringify(props, null, 2)}
+  </pre>
+);
+
 const isJSON = code => {
   try {
-    JSON.parse(code);
-    return true;
+    return JSON.parse(code);
   } catch (e) {
     return false;
   }
@@ -25,23 +35,21 @@ export default TabsHOC(['tree', 'graph', 'repl'], 'tree')(
     constructor(props) {
       super(props);
       this.state = {
-        data: isJSON(props.code) ? JSON.parse(props.code) : {},
+        data: isJSON(props.code) || {},
         isShowingCurrentCode: true,
       };
     }
 
     componentDidUpdate(prevProps) {
       if (prevProps.code !== this.props.code) {
-        console.log('UPDATE');
         this.setState({
-          data: isJSON(this.props.code) ? JSON.parse(this.props.code) : {},
+          data: isJSON(this.props.code) || {},
           isShowingCurrentCode: true,
         });
       }
     }
 
     renderMain = _ => {
-      console.log('MainViewer.renderMain>', this.props);
       const { code } = this.props;
       const { activeTab } = this.props;
 
@@ -57,6 +65,7 @@ export default TabsHOC(['tree', 'graph', 'repl'], 'tree')(
           main = <ObjectVisualizer data={data} />;
           break;
         case 'repl':
+          main = <Debug {...data} />;
           break;
       }
 
@@ -73,7 +82,7 @@ export default TabsHOC(['tree', 'graph', 'repl'], 'tree')(
     };
 
     render() {
-      console.log('MainViwer.render>', this.props);
+      // console.log('MainViwer.render>', this.props);
       const { renderMain, renderButton } = this;
       return (
         <EditorActionPaneLayout
@@ -81,6 +90,7 @@ export default TabsHOC(['tree', 'graph', 'repl'], 'tree')(
             <div>
               {renderButton('tree', 'Tree')}
               {renderButton('graph', 'Graph')}
+              {renderButton('repl', 'Text')}
             </div>
           }
           main={<MainWrapper>{renderMain()}</MainWrapper>}

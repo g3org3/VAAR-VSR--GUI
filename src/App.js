@@ -15,56 +15,71 @@ export default class App extends PureComponent {
     contents: {},
     saveData: () => console.log('savedata: not binded'),
     runFN: () => console.log('run: not binded'),
+    setTabN: () => console.log('settabn: not binded'),
   };
 
   componentDidMount() {
-    let previousKey = '';
+    const truncateAt = 4;
     let pressedKeys = [];
     const getLastN = (a, n) => a.slice(a.length - n);
+    const _ = k => (k.length === 1 ? `Key${k}` : k);
+    const mactrans = k => (k === '*' ? 'MetaLeft' : _(k));
+    const wintrans = k => (k === '*' ? 'ControlLeft' : _(k));
+    const isPatternMatched = (pattern, keys) => {
+      const mac = keys.map(mactrans).join('-');
+      const win = keys.map(wintrans).join('-');
+      return pattern === mac || pattern === win;
+    };
+    const isPatternAnyDigit = (pattern, digits) => {
+      const foundMac = digits
+        .map(d => pattern === ['*', `Digit${d}`].map(mactrans).join('-'))
+        .filter(Boolean);
+      if (foundMac.length === 1) return true;
+      const foundWin = digits
+        .map(d => pattern === ['*', `Digit${d}`].map(wintrans).join('-'))
+        .filter(Boolean);
+      return foundWin.length === 1;
+    };
     document.onkeydown = e => {
-      const { code } = e;
+      const { code, key } = e;
 
       // add to our history of pressed keys
       pressedKeys.push(code);
 
-      // truncate array if length is over 5
-      if (pressedKeys.length > 5) pressedKeys = getLastN(pressedKeys, 5);
+      // truncate array if length is over N
+      if (pressedKeys.length > truncateAt)
+        pressedKeys = getLastN(pressedKeys, truncateAt);
 
       // create a pattern: join last 3 pressed keys
-      let pattern = '';
-      if (pressedKeys.length >= 3) {
-        const keys = getLastN(pressedKeys, 3);
-        pattern = keys.join('-');
-      }
+      const keys = getLastN(['', '', ...pressedKeys], 2);
+      const pattern2 = keys.join('-');
+      const pattern3 = getLastN(['', '', '', ...pressedKeys], 3).join('-');
 
       // check pattern: CMD+K+B
-      if (pattern === 'MetaLeft-KeyK-KeyB') {
+      if (isPatternMatched(pattern3, ['*', 'K', 'B'])) {
         this.togglePane();
-      }
-
-      if (previousKey === 'MetaLeft') {
-        if (code === 'KeyS') {
-          e.preventDefault();
-          const data = this.state.contents[`/${this.state.tab}`];
-          if (data) {
-            //save
-            console.log(`saving ${this.state.tab} ...`);
-            this.state.saveData();
-          }
+      } else if (isPatternMatched(pattern2, ['*', 'S'])) {
+        e.preventDefault();
+        const data = this.state.contents[`/${this.state.tab}`];
+        if (data) {
+          //save
+          console.log(`saving ${this.state.tab} ...`);
+          this.state.saveData();
         }
-        if (code === 'KeyR') {
-          e.preventDefault();
-          console.log(`running ...`);
-          this.state.runFN();
-        }
+      } else if (isPatternMatched(pattern2, ['*', 'R'])) {
+        e.preventDefault();
+        console.log(`running ...`);
+        this.state.runFN();
+      } else if (isPatternAnyDigit(pattern2, [1, 2, 3, 4, 5, 6, 7])) {
+        e.preventDefault();
+        this.state.setTabN(Number(key) - 1);
       }
-
-      previousKey = code;
     };
   }
 
   togglePane = () => this.setState(s => ({ ...s, sidepane: !s.sidepane }));
   onSetTab = ({ tab }) => this.setState({ tab });
+  bindSetTabn = setTabN => this.setState({ setTabN });
   bindSave = saveData => this.setState({ saveData });
   bindRun = runFN => this.setState({ runFN });
   bindStateData = ({ endpoint, data }) => {
@@ -101,7 +116,11 @@ export default class App extends PureComponent {
                 className="col-sm-9"
                 style={{ borderLeft: 'solid #aaa 1px', height: '90vh' }}
               >
-                <Tabs onSetTab={this.onSetTab}>
+                <Tabs
+                  bindSetTabN={this.bindSetTabn}
+                  onSetTab={this.onSetTab}
+                  pills
+                >
                   <Tabs.Tab title="home">
                     <h2>Welcome v{VERSION}</h2>
                   </Tabs.Tab>

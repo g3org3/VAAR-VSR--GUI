@@ -1,5 +1,12 @@
+REGISTRY='registry.jorgeadolfo.com'
+IMAGE='epav-api'
+PORT=5000
+VERSION=`jq -r '.version' package.json`
+NAME=$(IMAGE)
+FULLNAME=$(REGISTRY)/$(IMAGE):$(VERSION)
+
 make:
-	docker build -t registry.jorgeadolfo.com/epav-gui:1.1.0 -f docker/Dockerfile .
+	docker build -t $(FULLNAME) -f docker/Dockerfile .
 
 compose:
 	docker-compose -f docker/docker-compose.yml up

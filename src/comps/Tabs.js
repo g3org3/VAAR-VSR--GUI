@@ -42,6 +42,8 @@ export default class Tabs extends Component {
     );
   };
 
+  setTabN = index => this.setTab(this.props.children[index].props);
+
   getProps = () => {
     return {
       ...this.state,
@@ -50,6 +52,10 @@ export default class Tabs extends Component {
   };
 
   componentDidMount() {
+    // bindif
+    if (typeof this.props.bindSetTabN === 'function') {
+      this.props.bindSetTabN(this.setTabN);
+    }
     // set the first tab active
     const {
       children: { length },
@@ -64,9 +70,14 @@ export default class Tabs extends Component {
   }
 
   render() {
+    const { pills, tabs } = this.props;
+    const props = {
+      pills,
+      tabs,
+    };
     return (
       <Provider value={this.getProps()}>
-        <Nav {...this.props}>{this.props.children}</Nav>
+        <Nav {...props}>{this.props.children}</Nav>
         <div style={style(this.props.bordered)}>{this.state.content}</div>
       </Provider>
     );
