@@ -1,5 +1,5 @@
 REGISTRY='registry.jorgeadolfo.com'
-IMAGE='epav-api'
+IMAGE='epav-gui'
 PORT=5000
 VERSION=`jq -r '.version' package.json`
 NAME=$(IMAGE)

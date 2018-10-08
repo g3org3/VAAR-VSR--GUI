@@ -10,7 +10,7 @@ services:
     #   - ./custom_types:/cli/custom_types
     #   - ./files:/server-api/files
   gui:
-    image: registry.jorgeadolfo.com/epav-gui:1.0.1
+    image: registry.jorgeadolfo.com/epav-gui:1.1.0
     ports:
       # bind hostport:containerport
       - 8000:3000

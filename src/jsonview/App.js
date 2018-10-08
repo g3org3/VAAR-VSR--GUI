@@ -7,6 +7,7 @@ const Div = styled.div`
   color: white;
   font-family: Source Code Pro, monospace;
   height: 80vh;
+  overflow: auto;
 `;
 const isJSON = code => {
   if (typeof code === 'object') return code;
