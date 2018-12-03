@@ -6,8 +6,17 @@ RUN mkdir /build
 WORKDIR /build
 RUN npm i express ejs body-parser node-fetch
 
-COPY build public
-COPY build/index.html views/index.html
+COPY ./package.json ./package.json
+RUN npm i
+
+COPY ./public ./public
+COPY ./src ./src
+RUN npm run build
+
+RUN ls
+RUN mv build public
+RUN mkdir views && cp public/index.html views/index.html
+
 COPY server/server.js .
 COPY package.json .
 CMD ["node", "server.js"]
