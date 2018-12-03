@@ -1,7 +1,7 @@
 REGISTRY='registry.jorgeadolfo.com'
 IMAGE='epav-gui'
 PORT=5000
-VERSION=`jq -r '.version' package.json`
+VERSION='latest'
 NAME=$(IMAGE)
 FULLNAME=$(REGISTRY)/$(IMAGE):$(VERSION)
 
