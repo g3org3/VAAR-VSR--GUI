@@ -1,7 +1,7 @@
 version: '2'
 services:
   epavapi:
-    image: registry.jorgeadolfo.com/epav-api:1.1.0
+    image: registry.jorgeadolfo.com/epav-api:latest
     # environment:
     #   # if we want to change the container port
     #   - PORT=5000 #default 5000
@@ -10,7 +10,7 @@ services:
     #   - ./custom_types:/cli/custom_types
     #   - ./files:/server-api/files
   gui:
-    image: registry.jorgeadolfo.com/epav-gui:1.1.0
+    image: registry.jorgeadolfo.com/epav-gui:latest
     ports:
       # bind hostport:containerport
       - 8000:3000
